@@ -15,13 +15,13 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: integration
+    needs: [integration]
     steps:
       - uses: actions/checkout@v3
       - run: echo "- Build the artifact"
 
   test-artifact:
-    needs: development
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,13 +29,13 @@ jobs:
 
   development:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build]
     steps:
       - run: echo "- Auto-deploy the artifact to the development environment"
 
   staging:
     runs-on: ubuntu-latest
-    needs: test-artifact
+    needs: [development, test-artifact]
     steps:
       - run: |
           echo "After development envirionment is deployed..."
@@ -49,7 +49,7 @@ jobs:
       - run: echo "- Test the staging environment"
 
   production:
-    needs: staging
+    needs: [test-staging]
     runs-on: ubuntu-latest
     steps:
       - run: |
